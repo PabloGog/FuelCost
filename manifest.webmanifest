@@ -1,0 +1,17 @@
+{
+  "name": "Fuel Cost Calculator",
+  "short_name": "Fuel Cost",
+  "description": "Quickly calculate and split fuel costs for a car trip.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f4ee",
+  "theme_color": "#15382e",
+  "icons": [
+    {
+      "src": "fuel-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

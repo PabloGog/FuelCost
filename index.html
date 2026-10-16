@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#15382e">
+  <meta name="description" content="Quickly calculate and split fuel costs for a car trip.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="fuel-icon.svg" type="image/svg+xml">
+  <title>Fuel Cost Calculator</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18201d;
+      --muted: #60706a;
+      --paper: #f5f4ee;
+      --surface: #ffffff;
+      --line: #d8ddd8;
+      --forest: #15382e;
+      --forest-hover: #205243;
+      --amber: #f0a629;
+      --error: #a42822;
+      --shadow: 0 20px 60px rgb(21 56 46 / 12%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgb(21 56 46 / 4%) 1px, transparent 1px),
+        linear-gradient(rgb(21 56 46 / 4%) 1px, transparent 1px),
+        var(--paper);
+      background-size: 32px 32px;
+      font-family: "Aptos", "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(100% - 32px, 960px);
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.8fr);
+      align-items: center;
+      gap: clamp(32px, 7vw, 88px);
+      padding: 48px 0;
+    }
+
+    .intro {
+      max-width: 520px;
+    }
+
+    .mark {
+      display: inline-grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 28px;
+      color: var(--forest);
+      background: var(--amber);
+      border-radius: 8px;
+    }
+
+    .mark svg {
+      width: 26px;
+      height: 26px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    h1 {
+      max-width: 480px;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.6rem, 7vw, 5.5rem);
+      font-weight: 600;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .intro p {
+      max-width: 410px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .calculator {
+      padding: clamp(24px, 5vw, 40px);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--amber);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      animation: arrive 500ms ease-out both;
+    }
+
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    form {
+      display: grid;
+      gap: 20px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--forest);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      min-height: 50px;
+      padding: 10px 64px 10px 14px;
+      color: var(--ink);
+      background: #fbfcfa;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      outline: none;
+      font: inherit;
+      font-size: 1.05rem;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    input:focus {
+      border-color: var(--forest);
+      box-shadow: 0 0 0 3px rgb(21 56 46 / 12%);
+    }
+
+    .unit {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    button {
+      min-height: 52px;
+      margin-top: 4px;
+      color: #fff;
+      background: var(--forest);
+      border: 0;
+      border-radius: 5px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      transition: background 150ms ease, transform 150ms ease;
+    }
+
+    button:hover {
+      background: var(--forest-hover);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .error {
+      min-height: 20px;
+      margin: 14px 0 0;
+      color: var(--error);
+      font-size: 0.9rem;
+    }
+
+    .result {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      margin-top: 18px;
+      overflow: hidden;
+      background: var(--line);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 18px;
+      background: #f7f8f5;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .metric output {
+      display: block;
+      margin-top: 6px;
+      overflow-wrap: anywhere;
+      color: var(--forest);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.1rem, 3vw, 1.45rem);
+      font-weight: 600;
+    }
+
+    .metric--total {
+      grid-column: 1 / -1;
+      background: #edf3eb;
+    }
+
+    .metric--total output {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+    }
+
+    @media (max-width: 720px) {
+      main {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 32px 0;
+      }
+
+      .mark {
+        margin-bottom: 20px;
+      }
+
+      .intro p {
+        margin-top: 16px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      main {
+        width: min(100% - 20px, 960px);
+      }
+
+      .calculator {
+        padding: 20px;
+      }
+
+      .result {
+        grid-template-columns: 1fr;
+      }
+
+      .metric--total {
+        grid-column: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .calculator {
+        animation: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 22V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v17"></path>
+          <path d="M3 11h12M7 7h4M15 8h2l3 3v7a2 2 0 0 0 2 2"></path>
+        </svg>
+      </div>
+      <h1 id="page-title">Fuel cost, before you go.</h1>
+      <p>Calculate the trip once, then see what everyone owes.</p>
+    </section>
+
+    <section class="calculator" aria-label="Fuel cost calculator">
+      <form id="fuel-form" novalidate>
+        <label for="price">
+          Fuel price
+          <span class="input-wrap">
+            <input id="price" name="price" type="text" inputmode="decimal" autocomplete="off" placeholder="1.75" autofocus>
+            <span class="unit">per L</span>
+          </span>
+        </label>
+
+        <label for="consumption">
+          Average consumption
+          <span class="input-wrap">
+            <input id="consumption" name="consumption" type="text" inputmode="decimal" autocomplete="off" placeholder="7.2">
+            <span class="unit">L / 100 km</span>
+          </span>
+        </label>
+
+        <label for="distance">
+          Distance
+          <span class="input-wrap">
+            <input id="distance" name="distance" type="text" inputmode="decimal" autocomplete="off" placeholder="250">
+            <span class="unit">km</span>
+          </span>
+        </label>
+
+        <button type="submit">Calculate and split</button>
+      </form>
+
+      <p id="error" class="error" role="alert" aria-live="polite"></p>
+
+      <div class="result" aria-live="polite">
+        <div class="metric metric--total">
+          <span>Total fuel cost</span>
+          <output id="total-cost">0.00</output>
+        </div>
+        <div class="metric">
+          <span>1 person</span>
+          <output id="split-1">0.00</output>
+        </div>
+        <div class="metric">
+          <span>2 people</span>
+          <output id="split-2">0.00</output>
+        </div>
+        <div class="metric">
+          <span>3 people</span>
+          <output id="split-3">0.00</output>
+        </div>
+        <div class="metric">
+          <span>4 people</span>
+          <output id="split-4">0.00</output>
+        </div>
+        <div class="metric">
+          <span>Fuel used</span>
+          <output id="liters-used">0.00 L</output>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.querySelector("#fuel-form");
+    const error = document.querySelector("#error");
+    const totalCost = document.querySelector("#total-cost");
+    const litersUsed = document.querySelector("#liters-used");
+    const splitOutputs = [1, 2, 3, 4].map((people) => ({
+      people,
+      output: document.querySelector(`#split-${people}`)
+    }));
+
+    function parseNumber(id) {
+      const value = document.querySelector(id).value.trim().replace(",", ".");
+      return value === "" ? Number.NaN : Number(value);
+    }
+
+    function formatAmount(value) {
+      return value.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const pricePerLiter = parseNumber("#price");
+      const litersPer100Km = parseNumber("#consumption");
+      const distanceKm = parseNumber("#distance");
+      const values = [pricePerLiter, litersPer100Km, distanceKm];
+
+      if (!values.every(Number.isFinite)) {
+        error.textContent = "Enter a valid number in all three fields.";
+        return;
+      }
+
+      if (values.some((value) => value < 0)) {
+        error.textContent = "Values cannot be negative.";
+        return;
+      }
+
+      const fuelUsed = litersPer100Km * distanceKm / 100;
+      const cost = pricePerLiter * fuelUsed;
+
+      error.textContent = "";
+      totalCost.textContent = formatAmount(cost);
+      litersUsed.textContent = `${fuelUsed.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })} L`;
+      splitOutputs.forEach(({ people, output }) => {
+        output.textContent = formatAmount(cost / people);
+      });
+    });
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js").catch(() => {
+        // The calculator still works when opened directly from a file.
+      });
+    }
+  </script>
+</body>
+</html>
