@@ -16,8 +16,8 @@ The web app remembers the last values on the device, picks a default currency fr
 Needs Python 3.10+ with tkinter (included in the python.org Windows installer).
 
 ```bat
-git clone https://github.com/PabloGog/fuelcost.git
-cd fuelcost
+git clone https://github.com/PabloGog/FuelCost.git
+cd FuelCost
 setup_venv.bat
 fuel_cost.bat
 ```
