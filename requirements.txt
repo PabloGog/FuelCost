@@ -1,0 +1,2 @@
+# No third-party packages: fuel_cost.py uses only the standard library (tkinter).
+# Add dependencies here, then run setup_venv.bat again.

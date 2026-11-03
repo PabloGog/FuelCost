@@ -1,4 +1,4 @@
-const CACHE_NAME = "fuel-cost-v2";
+const CACHE_NAME = "fuel-cost-v8";
 const APP_FILES = ["./", "index.html", "manifest.webmanifest", "fuel-icon.svg"];
 
 self.addEventListener("install", (event) => {

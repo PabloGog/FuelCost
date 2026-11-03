@@ -15,6 +15,7 @@
       --muted: #60706a;
       --paper: #f5f4ee;
       --surface: #ffffff;
+      --field: #fbfcfa;
       --line: #d8ddd8;
       --forest: #15382e;
       --forest-hover: #205243;
@@ -36,7 +37,7 @@
         linear-gradient(rgb(21 56 46 / 4%) 1px, transparent 1px),
         var(--paper);
       background-size: 32px 32px;
-      font-family: "Aptos", "Segoe UI", sans-serif;
+      font-family: "Aptos", "Segoe UI", Roboto, sans-serif;
     }
 
     main {
@@ -82,7 +83,6 @@
       font-size: clamp(2.6rem, 7vw, 5.5rem);
       font-weight: 600;
       line-height: 0.95;
-      letter-spacing: 0;
     }
 
     .intro p {
@@ -110,55 +110,188 @@
 
     form {
       display: grid;
-      gap: 20px;
+      gap: 18px;
     }
 
-    label {
+    label,
+    .label {
       display: grid;
       gap: 8px;
       color: var(--forest);
       font-size: 0.82rem;
       font-weight: 700;
-      letter-spacing: 0;
       text-transform: uppercase;
     }
 
-    .input-wrap {
-      position: relative;
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 88px;
+      gap: 12px;
     }
 
-    input {
-      width: 100%;
+    .row > label {
+      min-width: 0;
+    }
+
+    #currency {
+      padding: 0 8px;
+      text-align: center;
+    }
+
+    /* Input and unit sit side by side, so long numbers never run under the unit. */
+    .field {
+      display: flex;
+      align-items: center;
       min-height: 50px;
-      padding: 10px 64px 10px 14px;
-      color: var(--ink);
-      background: #fbfcfa;
+      background: var(--field);
       border: 1px solid var(--line);
       border-radius: 5px;
-      outline: none;
-      font: inherit;
-      font-size: 1.05rem;
       transition: border-color 150ms ease, box-shadow 150ms ease;
     }
 
-    input:focus {
+    .field:focus-within {
       border-color: var(--forest);
       box-shadow: 0 0 0 3px rgb(21 56 46 / 12%);
     }
 
-    .unit {
-      position: absolute;
-      top: 50%;
-      right: 14px;
-      color: var(--muted);
-      font-size: 0.88rem;
-      transform: translateY(-50%);
-      pointer-events: none;
+    .field:has(input[aria-invalid="true"]) {
+      border-color: var(--error);
     }
 
-    button {
+    /* width: 0 drops the browser's default ~20 character input width, so fields fit narrow columns. */
+    input {
+      flex: 1 1 0;
+      width: 0;
+      min-width: 0;
+      height: 48px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: transparent;
+      border: 0;
+      outline: none;
+      font: inherit;
+      font-size: 1.05rem;
+    }
+
+    .unit {
+      flex: none;
+      padding-right: 14px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 400;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: 50px 1fr 50px;
+      align-items: center;
+      min-height: 50px;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .stepper button {
+      height: 48px;
+      color: var(--forest);
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .stepper button:disabled {
+      color: var(--line);
+      cursor: default;
+    }
+
+    .stepper output {
+      color: var(--ink);
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-align: center;
+      text-transform: none;
+    }
+
+    button:focus-visible {
+      outline: 3px solid var(--amber);
+      outline-offset: 2px;
+    }
+
+    .error {
+      min-height: 20px;
+      margin: 12px 0 0;
+      color: var(--error);
+      font-size: 0.9rem;
+    }
+
+    .result {
+      margin-top: 6px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+    }
+
+    .per-person {
+      padding: 18px;
+      background: #edf3eb;
+    }
+
+    .result span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .result output {
+      display: block;
+      margin-top: 6px;
+      overflow-wrap: anywhere;
+      color: var(--forest);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.1rem, 3vw, 1.35rem);
+      font-weight: 600;
+    }
+
+    .per-person output {
+      font-size: clamp(2rem, 6vw, 2.6rem);
+      line-height: 1.1;
+    }
+
+    .result output .currency {
+      display: inline;
+      margin-left: 0.3em;
+      color: var(--muted);
+      font-family: "Aptos", "Segoe UI", Roboto, sans-serif;
+      font-size: 0.5em;
+      font-weight: 700;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      border-top: 1px solid var(--line);
+    }
+
+    .details div {
+      min-width: 0;
+      padding: 14px 18px;
+      background: #f7f8f5;
+    }
+
+    .share {
+      width: 100%;
       min-height: 52px;
-      margin-top: 4px;
+      margin-top: 16px;
       color: #fff;
       background: var(--forest);
       border: 0;
@@ -169,79 +302,54 @@
       transition: background 150ms ease, transform 150ms ease;
     }
 
-    button:hover {
+    .share:hover:not(:disabled) {
       background: var(--forest-hover);
     }
 
-    button:active {
+    .share:active:not(:disabled) {
       transform: translateY(1px);
     }
 
-    .error {
-      min-height: 20px;
-      margin: 14px 0 0;
-      color: var(--error);
-      font-size: 0.9rem;
+    .share:disabled {
+      opacity: 0.4;
+      cursor: default;
     }
 
-    .result {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      margin-top: 18px;
-      overflow: hidden;
-      background: var(--line);
-      border: 1px solid var(--line);
-      border-radius: 5px;
+    .share[hidden] {
+      display: none;
     }
 
-    .metric {
-      min-width: 0;
-      padding: 18px;
-      background: #f7f8f5;
-    }
-
-    .metric span {
-      display: block;
-      color: var(--muted);
-      font-size: 0.76rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .metric output {
-      display: block;
-      margin-top: 6px;
-      overflow-wrap: anywhere;
-      color: var(--forest);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(1.1rem, 3vw, 1.45rem);
-      font-weight: 600;
-    }
-
-    .metric--total {
-      grid-column: 1 / -1;
-      background: #edf3eb;
-    }
-
-    .metric--total output {
-      font-size: clamp(1.5rem, 4vw, 2rem);
-    }
-
+    /* Phones: compact header so the calculator is visible straight away. */
     @media (max-width: 720px) {
       main {
         min-height: auto;
         grid-template-columns: 1fr;
-        gap: 32px;
-        padding: 32px 0;
+        gap: 20px;
+        padding: 20px 0 32px;
+      }
+
+      .intro {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        column-gap: 14px;
       }
 
       .mark {
-        margin-bottom: 20px;
+        width: 40px;
+        height: 40px;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+        line-height: 1.1;
       }
 
       .intro p {
-        margin-top: 16px;
+        grid-column: 1 / -1;
+        margin-top: 10px;
+        font-size: 0.95rem;
       }
     }
 
@@ -252,14 +360,6 @@
 
       .calculator {
         padding: 20px;
-      }
-
-      .result {
-        grid-template-columns: 1fr;
-      }
-
-      .metric--total {
-        grid-column: auto;
       }
     }
 
@@ -280,22 +380,31 @@
         </svg>
       </div>
       <h1 id="page-title">Fuel cost, before you go.</h1>
-      <p>Calculate the trip once, then see what everyone owes.</p>
+      <p>Enter the trip, pick how many people, share what everyone owes.</p>
     </section>
 
     <section class="calculator" aria-label="Fuel cost calculator">
       <form id="fuel-form" novalidate>
-        <label for="price">
-          Fuel price
-          <span class="input-wrap">
-            <input id="price" name="price" type="text" inputmode="decimal" autocomplete="off" placeholder="1.75" autofocus>
-            <span class="unit">per L</span>
-          </span>
-        </label>
+        <div class="row">
+          <label for="price">
+            Fuel price
+            <span class="field">
+              <input id="price" name="price" type="text" inputmode="decimal" autocomplete="off" placeholder="1.75">
+              <span class="unit">per L</span>
+            </span>
+          </label>
+
+          <label for="currency">
+            Currency
+            <span class="field">
+              <input id="currency" name="currency" type="text" autocomplete="off" maxlength="5" placeholder="EUR" spellcheck="false">
+            </span>
+          </label>
+        </div>
 
         <label for="consumption">
           Average consumption
-          <span class="input-wrap">
+          <span class="field">
             <input id="consumption" name="consumption" type="text" inputmode="decimal" autocomplete="off" placeholder="7.2">
             <span class="unit">L / 100 km</span>
           </span>
@@ -303,99 +412,226 @@
 
         <label for="distance">
           Distance
-          <span class="input-wrap">
+          <span class="field">
             <input id="distance" name="distance" type="text" inputmode="decimal" autocomplete="off" placeholder="250">
             <span class="unit">km</span>
           </span>
         </label>
 
-        <button type="submit">Calculate and split</button>
+        <div class="label" role="group" aria-labelledby="people-label">
+          <span id="people-label">People</span>
+          <div class="stepper">
+            <button type="button" id="people-minus" aria-label="Fewer people">&minus;</button>
+            <output id="people" aria-live="polite">2</output>
+            <button type="button" id="people-plus" aria-label="More people">+</button>
+          </div>
+        </div>
       </form>
 
-      <p id="error" class="error" role="alert" aria-live="polite"></p>
+      <p id="error" class="error" role="alert"></p>
 
-      <div class="result" aria-live="polite">
-        <div class="metric metric--total">
-          <span>Total fuel cost</span>
-          <output id="total-cost">0.00</output>
+      <div class="result">
+        <div class="per-person" aria-live="polite">
+          <span>Each person pays</span>
+          <output id="per-person">&mdash;</output>
         </div>
-        <div class="metric">
-          <span>1 person</span>
-          <output id="split-1">0.00</output>
-        </div>
-        <div class="metric">
-          <span>2 people</span>
-          <output id="split-2">0.00</output>
-        </div>
-        <div class="metric">
-          <span>3 people</span>
-          <output id="split-3">0.00</output>
-        </div>
-        <div class="metric">
-          <span>4 people</span>
-          <output id="split-4">0.00</output>
-        </div>
-        <div class="metric">
-          <span>Fuel used</span>
-          <output id="liters-used">0.00 L</output>
+        <div class="details">
+          <div>
+            <span>Total cost</span>
+            <output id="total-cost">&mdash;</output>
+          </div>
+          <div>
+            <span>Fuel used</span>
+            <output id="liters-used">&mdash;</output>
+          </div>
         </div>
       </div>
+
+      <button type="button" id="share" class="share" disabled>Share</button>
     </section>
   </main>
 
   <script>
-    const form = document.querySelector("#fuel-form");
-    const error = document.querySelector("#error");
-    const totalCost = document.querySelector("#total-cost");
-    const litersUsed = document.querySelector("#liters-used");
-    const splitOutputs = [1, 2, 3, 4].map((people) => ({
-      people,
-      output: document.querySelector(`#split-${people}`)
-    }));
+    const MIN_PEOPLE = 1;
+    const MAX_PEOPLE = 20;
+    const STORAGE_KEY = "fuel-cost-values";
 
-    function parseNumber(id) {
-      const value = document.querySelector(id).value.trim().replace(",", ".");
+    // Default currency from the device region; anything not listed starts empty.
+    const REGION_CURRENCY = {
+      AT: "EUR", BE: "EUR", BG: "EUR", CY: "EUR", DE: "EUR", EE: "EUR", ES: "EUR",
+      FI: "EUR", FR: "EUR", GR: "EUR", HR: "EUR", IE: "EUR", IT: "EUR", LT: "EUR",
+      LU: "EUR", LV: "EUR", MT: "EUR", NL: "EUR", PT: "EUR", SI: "EUR", SK: "EUR",
+      US: "USD", GB: "GBP", CH: "CHF", PL: "PLN", CZ: "CZK", HU: "HUF", RO: "RON",
+      SE: "SEK", NO: "NOK", DK: "DKK", UA: "UAH", TR: "TRY", CA: "CAD", AU: "AUD",
+      NZ: "NZD", JP: "JPY", IN: "INR", BR: "BRL", MX: "MXN", ZA: "ZAR"
+    };
+
+    const form = document.querySelector("#fuel-form");
+    const inputs = ["#price", "#consumption", "#distance"].map((id) => document.querySelector(id));
+    const currencyInput = document.querySelector("#currency");
+    const error = document.querySelector("#error");
+    const peopleOutput = document.querySelector("#people");
+    const minusButton = document.querySelector("#people-minus");
+    const plusButton = document.querySelector("#people-plus");
+    const perPersonOutput = document.querySelector("#per-person");
+    const totalOutput = document.querySelector("#total-cost");
+    const litersOutput = document.querySelector("#liters-used");
+    const shareButton = document.querySelector("#share");
+
+    let people = 2;
+    let shareText = "";
+
+    function parseNumber(input) {
+      const value = input.value.trim().replace(",", ".");
       return value === "" ? Number.NaN : Number(value);
     }
 
-    function formatAmount(value) {
+    function format(value) {
       return value.toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
     }
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      const pricePerLiter = parseNumber("#price");
-      const litersPer100Km = parseNumber("#consumption");
-      const distanceKm = parseNumber("#distance");
-      const values = [pricePerLiter, litersPer100Km, distanceKm];
-
-      if (!values.every(Number.isFinite)) {
-        error.textContent = "Enter a valid number in all three fields.";
-        return;
+    function regionCurrency() {
+      try {
+        const region = new Intl.Locale(navigator.language).maximize().region;
+        return REGION_CURRENCY[region] || "EUR";
+      } catch {
+        return "EUR";
       }
+    }
 
-      if (values.some((value) => value < 0)) {
-        error.textContent = "Values cannot be negative.";
-        return;
+    const DEFAULT_CURRENCY = regionCurrency();
+
+    // An empty currency field falls back to the default, so amounts always carry a currency.
+    function currency() {
+      return currencyInput.value.trim() || DEFAULT_CURRENCY;
+    }
+
+    function money(value) {
+      return `${format(value)} ${currency()}`;
+    }
+
+    // On screen the currency is a smaller label next to the amount.
+    function showMoney(output, value) {
+      const label = document.createElement("span");
+      label.className = "currency";
+      label.textContent = currency();
+      output.replaceChildren(format(value), label);
+    }
+
+    function loadSaved() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      } catch {
+        return {};
       }
+    }
 
-      const fuelUsed = litersPer100Km * distanceKm / 100;
-      const cost = pricePerLiter * fuelUsed;
+    // Keeps the last entered values on this device for the next visit.
+    function save() {
+      const values = { currency: currencyInput.value, people };
+      inputs.forEach((input) => { values[input.id] = input.value; });
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+      } catch {
+        // Storage blocked; the calculator still works, it just won't remember.
+      }
+    }
 
-      error.textContent = "";
-      totalCost.textContent = formatAmount(cost);
-      litersUsed.textContent = `${fuelUsed.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })} L`;
-      splitOutputs.forEach(({ people, output }) => {
-        output.textContent = formatAmount(cost / people);
+    function showEmpty() {
+      perPersonOutput.textContent = "—";
+      totalOutput.textContent = "—";
+      litersOutput.textContent = "—";
+      shareButton.disabled = true;
+      shareText = "";
+    }
+
+    function calculate() {
+      const [price, consumption, distance] = inputs.map(parseNumber);
+      let message = "";
+
+      save();
+
+      inputs.forEach((input) => {
+        const raw = input.value.trim();
+        const value = parseNumber(input);
+        const invalid = raw !== "" && (!Number.isFinite(value) || value < 0);
+        input.setAttribute("aria-invalid", invalid);
+        if (invalid) {
+          message = value < 0 ? "Values cannot be negative." : "Use numbers only, e.g. 1.75";
+        }
       });
+
+      error.textContent = message;
+
+      if (message || ![price, consumption, distance].every(Number.isFinite)) {
+        showEmpty();
+        return;
+      }
+
+      const liters = consumption * distance / 100;
+      const total = price * liters;
+      const each = total / people;
+
+      showMoney(perPersonOutput, each);
+      showMoney(totalOutput, total);
+      litersOutput.textContent = `${format(liters)} L`;
+
+      shareText = people === 1
+        ? `Fuel cost: ${format(distance)} km, ${format(liters)} L, total ${money(total)}`
+        : `Fuel cost: ${format(distance)} km, ${format(liters)} L, total ${money(total)}, ` +
+          `${people} people, ${money(each)} each`;
+      shareButton.disabled = false;
+    }
+
+    function setPeople(count) {
+      people = Math.min(MAX_PEOPLE, Math.max(MIN_PEOPLE, count));
+      peopleOutput.textContent = people;
+      minusButton.disabled = people === MIN_PEOPLE;
+      plusButton.disabled = people === MAX_PEOPLE;
+      calculate();
+    }
+
+    async function share() {
+      if (!shareText) return;
+      try {
+        if (navigator.share) {
+          await navigator.share({ text: shareText });
+          return;
+        }
+        await navigator.clipboard.writeText(shareText);
+        shareButton.textContent = "Copied";
+        setTimeout(() => { shareButton.textContent = "Share"; }, 1500);
+      } catch {
+        // Share sheet dismissed or clipboard blocked; nothing to do.
+      }
+    }
+
+    form.addEventListener("input", calculate);
+    form.addEventListener("submit", (event) => event.preventDefault());
+    minusButton.addEventListener("click", () => setPeople(people - 1));
+    plusButton.addEventListener("click", () => setPeople(people + 1));
+    shareButton.addEventListener("click", share);
+
+    if (!navigator.share && !navigator.clipboard) {
+      shareButton.hidden = true;
+    }
+
+    const saved = loadSaved();
+    inputs.forEach((input) => {
+      if (typeof saved[input.id] === "string") input.value = saved[input.id];
     });
+    currencyInput.placeholder = DEFAULT_CURRENCY;
+    currencyInput.value = (typeof saved.currency === "string" && saved.currency.trim()) || DEFAULT_CURRENCY;
+    currencyInput.addEventListener("change", () => {
+      if (!currencyInput.value.trim()) {
+        currencyInput.value = DEFAULT_CURRENCY;
+        calculate();
+      }
+    });
+    setPeople(Number.isInteger(saved.people) ? saved.people : people);
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js").catch(() => {
